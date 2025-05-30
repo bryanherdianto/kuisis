@@ -1,6 +1,6 @@
 # 🧠 Kuisis - Interactive Quiz Application
 
-
+![image](https://github.com/user-attachments/assets/22331db2-a0fa-4436-942e-4407f46cd2ec)
 
 ## 📝 Overview
 Kuisis is an interactive quiz application built with React that allows users to test their knowledge across various categories. The application fetches quiz categories and questions from an external API, provides an intuitive quiz-taking experience, and offers customization options for quiz difficulty and length.
