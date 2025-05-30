@@ -1,5 +1,5 @@
-export default function QuizProgress({ currentQuestionIndex, totalQuestions, timeRemaining, formatTime }) {
-  const progressPercentage = (currentQuestionIndex / totalQuestions) * 100;
+export default function QuizProgress({ currentQuestionIndex, totalQuestions, timeRemaining, formatTime, initialTime }) {
+  const timePercentage = Math.max(0, Math.min(100, (timeRemaining / initialTime) * 100));
   
   return (
     <div className="mb-6">
@@ -8,14 +8,14 @@ export default function QuizProgress({ currentQuestionIndex, totalQuestions, tim
           Question {currentQuestionIndex + 1} of {totalQuestions}
         </div>
         <div className="text-sm font-medium text-indigo-600">
-          Time Remaining: {formatTime()}
+          Countdown: {formatTime()}
         </div>
       </div>
       
       <div className="w-full bg-gray-200 rounded-full h-2">
         <div 
           className="bg-indigo-600 h-2 rounded-full transition-all duration-300" 
-          style={{ width: `${progressPercentage}%` }}
+          style={{ width: `${timePercentage}%` }}
         />
       </div>
     </div>

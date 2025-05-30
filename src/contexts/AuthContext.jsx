@@ -19,14 +19,12 @@ export function AuthProvider({ children }) {
     };
   });
 
-  // Update localStorage whenever stats change
   useEffect(() => {
     if (isSignedIn) {
       localStorage.setItem('userStats', JSON.stringify(userStats));
     }
   }, [userStats, isSignedIn]);
 
-  // Function to update user stats after quiz completion
   const updateStats = (quizResults) => {
     setUserStats(prevStats => {
       const newStats = {

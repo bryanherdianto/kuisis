@@ -2,21 +2,19 @@ import { createContext, useContext, useState, useEffect } from 'react';
 
 const QuizContext = createContext();
 
-export function useQuiz() {
+export const useQuiz = () => {
   return useContext(QuizContext);
-}
+};
 
 export function QuizProvider({ children }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeQuiz, setActiveQuiz] = useState(() => {
-    // Try to restore active quiz from localStorage
     const savedQuiz = localStorage.getItem('activeQuiz');
     return savedQuiz ? JSON.parse(savedQuiz) : null;
   });
 
-  // Fetch categories on component mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -35,7 +33,6 @@ export function QuizProvider({ children }) {
     fetchCategories();
   }, []);
 
-  // Save active quiz to localStorage whenever it changes
   useEffect(() => {
     if (activeQuiz) {
       localStorage.setItem('activeQuiz', JSON.stringify(activeQuiz));
@@ -44,27 +41,27 @@ export function QuizProvider({ children }) {
     }
   }, [activeQuiz]);
 
-  // Start a new quiz
   const startQuiz = async (categoryId, amount, difficulty) => {
     try {
       setLoading(true);
       const url = `https://opentdb.com/api.php?amount=${amount}&category=${categoryId}&difficulty=${difficulty}&type=multiple`;
       const response = await fetch(url);
       const data = await response.json();
-      
+
       if (data.response_code !== 0) {
         throw new Error('Failed to load quiz questions');
       }
 
       const category = categories.find(c => c.id === categoryId)?.name || 'Unknown';
-      
-      const quiz = {
-        id: Date.now(),
+
+      const quiz = {        id: Date.now(),
         category,
         categoryId,
         difficulty,
         startTime: new Date().toISOString(),
-        timeLimit: amount * 30, // 30 seconds per question
+        timeLimit: amount * 30,
+        timeRemaining: amount * 30,
+        lastResumeTime: new Date().toISOString(),
         currentQuestionIndex: 0,
         questions: data.results.map(q => ({
           ...q,
@@ -81,7 +78,7 @@ export function QuizProvider({ children }) {
           difficulty
         }
       };
-      
+
       setActiveQuiz(quiz);
       return quiz;
     } catch (err) {
@@ -93,32 +90,28 @@ export function QuizProvider({ children }) {
     }
   };
 
-  // Submit an answer
   const submitAnswer = (answer) => {
     if (!activeQuiz || activeQuiz.completed) return;
-    
+
     setActiveQuiz(prev => {
       const currentQuestion = prev.questions[prev.currentQuestionIndex];
       const isCorrect = answer === currentQuestion.correct_answer;
-      
-      // Update current question with user's answer
+
       const updatedQuestions = [...prev.questions];
       updatedQuestions[prev.currentQuestionIndex] = {
         ...currentQuestion,
         user_answer: answer
       };
-      
-      // Update quiz results
+
       const updatedResults = {
         ...prev.results,
         correct: isCorrect ? prev.results.correct + 1 : prev.results.correct,
         wrong: !isCorrect ? prev.results.wrong + 1 : prev.results.wrong,
         unanswered: prev.results.unanswered - 1,
       };
-      
-      // Check if this was the last question
+
       const isLastQuestion = prev.currentQuestionIndex === prev.questions.length - 1;
-      
+
       return {
         ...prev,
         currentQuestionIndex: isLastQuestion ? prev.currentQuestionIndex : prev.currentQuestionIndex + 1,
@@ -129,15 +122,13 @@ export function QuizProvider({ children }) {
     });
   };
 
-  // Complete the quiz (time's up or manually finished)
   const completeQuiz = () => {
     if (!activeQuiz) return;
-    
+
     setActiveQuiz(prev => {
-      // Calculate final results
       const answeredCount = prev.questions.filter(q => q.user_answer !== null).length;
       const correctCount = prev.questions.filter(q => q.user_answer === q.correct_answer).length;
-      
+
       return {
         ...prev,
         completed: true,
@@ -151,7 +142,6 @@ export function QuizProvider({ children }) {
     });
   };
 
-  // Reset active quiz
   const resetQuiz = () => {
     setActiveQuiz(null);
     localStorage.removeItem('activeQuiz');

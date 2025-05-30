@@ -1,23 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 
 export default function QuizQuestion({ question, onAnswer }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
 
-  // Helper function to decode HTML entities
+  useEffect(() => {
+    setSelectedAnswer(null);
+  }, [question]);
+
   const decodeHTML = (html) => {
     const txt = document.createElement('textarea');
     txt.innerHTML = html;
     return txt.value;
   };
 
-  // Clean and decode the question and answer text
   const sanitizedQuestion = decodeHTML(question.question);
   const sanitizedAnswers = question.all_answers.map(answer => decodeHTML(answer));
 
   const handleSelectAnswer = (answer) => {
     setSelectedAnswer(answer);
-    // Small delay to let user see selection before moving to next question
     setTimeout(() => {
       onAnswer(answer);
     }, 500);

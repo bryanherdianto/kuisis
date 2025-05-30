@@ -1,8 +1,3 @@
-/**
- * Service for handling quiz data from the OpenTDB API
- */
-
-// Get all quiz categories
 export const getCategories = async () => {
   try {
     const response = await fetch('https://opentdb.com/api_category.php');
@@ -14,7 +9,6 @@ export const getCategories = async () => {
   }
 };
 
-// Get quiz questions
 export const getQuizQuestions = async (amount = 10, category = '', difficulty = '') => {
   try {
     let url = `https://opentdb.com/api.php?amount=${amount}&type=multiple`;

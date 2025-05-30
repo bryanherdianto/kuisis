@@ -1,32 +1,53 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuiz } from '../../contexts/QuizContext';
-import useTimer from '../../hooks/useTimer';
-import QuizQuestion from '../../components/QuizQuestion';
-import QuizProgress from '../../components/QuizProgress';
-import QuizResults from '../../components/QuizResults';
+import { useQuiz } from '../contexts/QuizContext';
+import useTimer from '../hooks/useTimer';
+import QuizQuestion from '../components/QuizQuestion';
+import QuizProgress from '../components/QuizProgress';
+import QuizResults from '../components/QuizResults';
 
 export default function Quiz() {
   const navigate = useNavigate();
   const { activeQuiz, submitAnswer, completeQuiz, resetQuiz } = useQuiz();
-  
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  const calculateRemainingTime = () => {
+    if (!activeQuiz) return 300;
+    
+    if (activeQuiz.timeRemaining) {
+      return activeQuiz.timeRemaining;
+    }
+    
+    return activeQuiz.timeLimit || 300;
+  };
+
   const handleTimeout = () => {
     completeQuiz();
   };
-  
+
   const { timeRemaining, formatTime, startTimer } = useTimer(
-    activeQuiz?.timeLimit || 300, 
+    calculateRemainingTime(),
     handleTimeout
   );
-
-  // Start timer when component mounts
+  useEffect(() => {
+    if (activeQuiz && !activeQuiz.completed && !isInitialized) {
+      startTimer();
+      setIsInitialized(true);
+    }
+  }, [activeQuiz, isInitialized, startTimer]);
+  
   useEffect(() => {
     if (activeQuiz && !activeQuiz.completed) {
-      startTimer();
+      console.log("Saving timer state:", timeRemaining);
+      const updatedQuiz = {
+        ...activeQuiz,
+        timeRemaining: timeRemaining,
+        lastResumeTime: new Date().toISOString()
+      };
+      localStorage.setItem('activeQuiz', JSON.stringify(updatedQuiz));
     }
-  }, []);
+  }, [timeRemaining, activeQuiz]);
 
-  // If no active quiz, redirect to home
   useEffect(() => {
     if (!activeQuiz) {
       navigate('/');
@@ -37,7 +58,6 @@ export default function Quiz() {
     return <div className="text-center p-6">Loading quiz...</div>;
   }
 
-  // Show results if quiz is completed
   if (activeQuiz.completed) {
     return <QuizResults results={activeQuiz.results} onReset={resetQuiz} />;
   }
@@ -51,16 +71,16 @@ export default function Quiz() {
         <p className="text-gray-600 capitalize mb-6">
           Difficulty: {activeQuiz.difficulty}
         </p>
-        
-        <QuizProgress 
-          currentQuestionIndex={activeQuiz.currentQuestionIndex} 
+        <QuizProgress
+          currentQuestionIndex={activeQuiz.currentQuestionIndex}
           totalQuestions={activeQuiz.questions.length}
           timeRemaining={timeRemaining}
           formatTime={formatTime}
+          initialTime={activeQuiz.timeLimit}
         />
       </div>
-      
-      <QuizQuestion 
+
+      <QuizQuestion
         question={currentQuestion}
         onAnswer={submitAnswer}
       />

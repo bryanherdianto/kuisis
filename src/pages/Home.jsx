@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuiz } from "../contexts/QuizContext";
 import CategoryCard from "../components/CategoryCard";
 
 function Home() {
   const { categories, loading, error } = useQuiz();
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   const filteredCategories = categories.filter(category =>
     category.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -16,7 +16,7 @@ function Home() {
         <h1 className="text-3xl font-bold mb-2">Choose a Quiz Category</h1>
         <p className="text-gray-600">Select a category to begin your quiz journey</p>
       </div>
-      
+
       <div className="mb-8">
         <input
           type="text"
@@ -26,7 +26,7 @@ function Home() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
-      
+
       {loading ? (
         <div className="text-center py-8">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-600 border-r-transparent"></div>
@@ -42,7 +42,7 @@ function Home() {
           {filteredCategories.map(category => (
             <CategoryCard key={category.id} category={category} />
           ))}
-          
+
           {filteredCategories.length === 0 && (
             <div className="col-span-full text-center py-8 text-gray-600">
               No categories found matching "{searchTerm}".
