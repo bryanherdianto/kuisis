@@ -4,6 +4,7 @@ import { QuizProvider } from './contexts/QuizContext';
 import Home from './pages/Home';
 import Stats from './pages/Stats';
 import Quiz from './pages/Quiz';
+import NotFound from './pages/NotFound';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -14,13 +15,14 @@ function App() {
   return (
     <AuthProvider>
       <QuizProvider>
-        <div className="min-h-screen bg-gray-50">
+        <div className="flex flex-col min-h-screen bg-gray-50">
           {!isQuizRoute && <Navbar />}
-          <main className={`p-4 ${!isQuizRoute ? 'mt-15' : ''}`}>
+          <main className={`flex-grow p-4 ${!isQuizRoute ? 'mt-15' : ''}`}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/quiz" element={<Quiz />} />
               <Route path="/stats" element={<Stats />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
           {!isQuizRoute && <Footer />}

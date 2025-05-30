@@ -54,7 +54,8 @@ export function QuizProvider({ children }) {
 
       const category = categories.find(c => c.id === categoryId)?.name || 'Unknown';
 
-      const quiz = {        id: Date.now(),
+      const quiz = {
+        id: Date.now(),
         category,
         categoryId,
         difficulty,

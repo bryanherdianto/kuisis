@@ -13,11 +13,11 @@ export default function Quiz() {
 
   const calculateRemainingTime = () => {
     if (!activeQuiz) return 300;
-    
+
     if (activeQuiz.timeRemaining) {
       return activeQuiz.timeRemaining;
     }
-    
+
     return activeQuiz.timeLimit || 300;
   };
 
@@ -35,7 +35,7 @@ export default function Quiz() {
       setIsInitialized(true);
     }
   }, [activeQuiz, isInitialized, startTimer]);
-  
+
   useEffect(() => {
     if (activeQuiz && !activeQuiz.completed) {
       console.log("Saving timer state:", timeRemaining);

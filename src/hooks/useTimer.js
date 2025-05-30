@@ -7,12 +7,10 @@ export default function useTimer(initialTime, onTimeout) {
   const endTimeRef = useRef(null);
   const onTimeoutRef = useRef(onTimeout);
 
-  // Keep callback ref updated
   useEffect(() => {
     onTimeoutRef.current = onTimeout;
   }, [onTimeout]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (timerRef.current) {
@@ -26,11 +24,11 @@ export default function useTimer(initialTime, onTimeout) {
     if (timerRef.current) {
       clearInterval(timerRef.current);
     }
-    
+
     timerRef.current = setInterval(() => {
       const now = Date.now();
       const newTime = Math.max(0, Math.floor((endTimeRef.current - now) / 1000));
-      
+
       setTimeRemaining(newTime);
 
       if (newTime <= 0) {
@@ -39,10 +37,9 @@ export default function useTimer(initialTime, onTimeout) {
         setIsRunning(false);
         onTimeoutRef.current?.();
       }
-    }, 100); // More frequent updates for better accuracy
+    }, 100);
   }, []);
 
-  // Handle visibility change with current values
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
@@ -51,7 +48,6 @@ export default function useTimer(initialTime, onTimeout) {
           timerRef.current = null;
         }
       } else {
-        // Only restart if we have an end time (meaning timer was running)
         if (endTimeRef.current && endTimeRef.current > Date.now()) {
           const newTime = Math.max(0, Math.floor((endTimeRef.current - Date.now()) / 1000));
           setTimeRemaining(newTime);
@@ -67,7 +63,7 @@ export default function useTimer(initialTime, onTimeout) {
 
   const startTimer = useCallback(() => {
     if (timeRemaining <= 0) return;
-    
+
     endTimeRef.current = Date.now() + timeRemaining * 1000;
     setIsRunning(true);
     startInternal();
@@ -79,7 +75,7 @@ export default function useTimer(initialTime, onTimeout) {
       timerRef.current = null;
     }
     setIsRunning(false);
-    
+
     if (endTimeRef.current) {
       const now = Date.now();
       const newTime = Math.max(0, Math.floor((endTimeRef.current - now) / 1000));
@@ -110,6 +106,6 @@ export default function useTimer(initialTime, onTimeout) {
     startTimer,
     pauseTimer,
     resetTimer,
-    progress: initialTime > 0 ? (initialTime - timeRemaining) / initialTime : 0 // Bonus feature
+    progress: initialTime > 0 ? (initialTime - timeRemaining) / initialTime : 0
   };
 }
