@@ -29,7 +29,7 @@ export default function QuizResults({ results, onReset }) {
         </p>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
         <div className="text-center p-4 bg-green-100 rounded-lg">
           <div className="text-3xl font-bold text-green-600">{results.correct}</div>
           <div className="text-gray-600">Correct</div>
@@ -40,7 +40,7 @@ export default function QuizResults({ results, onReset }) {
           <div className="text-gray-600">Wrong</div>
         </div>
 
-        <div className="text-center p-4 bg-gray-100 rounded-lg">
+        <div className="text-center p-4 bg-gray-100 rounded-lg col-span-2 sm:col-span-1">
           <div className="text-3xl font-bold text-gray-600">{results.unanswered}</div>
           <div className="text-gray-600">Unanswered</div>
         </div>
