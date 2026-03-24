@@ -1,11 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap");
 @import "tailwindcss";
 
 * {
-    font-family: "Inter", sans-serif;
+	font-family: "Inter", sans-serif;
 }
 
 .font-alfa-slab {
-    font-family: "Alfa Slab One", serif;
+	font-family: "Alfa Slab One", serif;
+}
+
+.cl-formButtonPrimary {
+	font-size: 14px;
+	text-transform: none;
+	background-color: #4f46e5;
+	transition: background-color 300ms ease;
+}
+
+.cl-formButtonPrimary:hover {
+	background-color: #4338ca;
+}
+
+.cl-cardBox,
+.cl-card {
+	box-shadow: none;
+	border: 1px solid #e7e5e4;
 }
